@@ -230,10 +230,10 @@ function startGame() {
             timeRemaining--;
             updateTimerDisplay();
 
-            // Gradually increase speed every 30 seconds
-            // Speed increases at: 210s, 180s, 150s, 120s, 90s, 60s, 30s
-            if (timeRemaining % 30 === 0 && currentSpeed > 300) {
-                currentSpeed = Math.max(300, currentSpeed - 100); // Minimum 300ms, decrease by 100ms
+            // Gradually increase speed every 20 seconds
+            // Speed increases at: 220s, 200s, 180s, 160s, 140s, 120s, 100s, 80s, 60s, 40s, 20s
+            if (timeRemaining % 20 === 0 && currentSpeed > 200) {
+                currentSpeed = Math.max(200, currentSpeed - 70); // Minimum 200ms, decrease by 70ms each level
                 updateDropSpeed();
                 console.log(`Speed increased! New speed: ${currentSpeed}ms`);
             }
@@ -543,6 +543,7 @@ document.addEventListener('keydown', (e) => {
             e.preventDefault();
             break;
         case ' ':
+        case 'Enter':
             games[myPlayerId].hardDrop();
             sendGameState();
             e.preventDefault();

@@ -458,8 +458,8 @@ class TetrisGame {
         }
 
         // Draw grid lines
-        this.ctx.strokeStyle = '#333';
-        this.ctx.lineWidth = 0.5;
+        this.ctx.strokeStyle = 'rgba(100, 100, 120, 0.3)';
+        this.ctx.lineWidth = 1;
         for (let i = 0; i <= COLS; i++) {
             this.ctx.beginPath();
             this.ctx.moveTo(i * BLOCK_SIZE, 0);
