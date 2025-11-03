@@ -35,6 +35,7 @@ class TetrisGame {
         this.grid = Array(ROWS).fill().map(() => Array(COLS).fill(0));
         this.score = 0;
         this.linesCleared = 0;
+        this.comboCount = 0;
         this.gameOver = false;
         this.currentPiece = null;
         this.scoreSubmitted = false;
@@ -143,8 +144,36 @@ class TetrisGame {
 
         if (linesClearedNow > 0) {
             this.linesCleared += linesClearedNow;
-            this.score += linesClearedNow * 100 * linesClearedNow;
+
+            // New scoring system
+            // 1 line = 10 points, 2 lines = 20 points
+            // 3+ lines = 50 base points + 20% cumulative combo bonus
+            if (linesClearedNow >= 3) {
+                // Combo! Increment combo count
+                this.comboCount++;
+                // Base score 50 + 20% bonus per combo
+                const comboBonus = Math.floor(50 * (this.comboCount * 0.2));
+                this.score += 50 + comboBonus;
+            } else {
+                // Regular clear, reset combo
+                this.comboCount = 0;
+                this.score += linesClearedNow * 10;
+            }
+
+            // Perfect Clear bonus: if all lines are cleared (grid is empty), award 120 points!
+            if (this.isPerfectClear()) {
+                this.score += 120;
+                console.log('PERFECT CLEAR! +120 bonus points!');
+            }
+        } else {
+            // No lines cleared, reset combo
+            this.comboCount = 0;
         }
+    }
+
+    isPerfectClear() {
+        // Check if the entire grid is empty (all cells are 0)
+        return this.grid.every(row => row.every(cell => cell === 0));
     }
 
     draw() {

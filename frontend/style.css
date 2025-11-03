@@ -26,9 +26,10 @@ h1 {
 
 .game-info {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 30px;
+    gap: 15px;
     margin-bottom: 30px;
     background: rgba(255,255,255,0.1);
     padding: 15px;
@@ -36,37 +37,83 @@ h1 {
     backdrop-filter: blur(10px);
 }
 
-.player-id, .connection-status {
+.player-id, .connection-status, .timer-display {
     font-size: 1.1em;
 }
 
-#startBtn, #leaderboardBtn {
-    padding: 10px 30px;
-    font-size: 1.1em;
-    background: #4CAF50;
+.timer-display {
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.game-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1em;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.3s;
+    font-weight: bold;
+}
+
+#startBtn {
+    background: #4CAF50;
+}
+
+#startBtn:hover:not(:disabled) {
+    background: #45a049;
+    transform: scale(1.05);
+}
+
+#pauseBtn {
+    background: #FF9800;
+}
+
+#pauseBtn:hover:not(:disabled) {
+    background: #F57C00;
+    transform: scale(1.05);
+}
+
+#stopBtn {
+    background: #f44336;
+}
+
+#stopBtn:hover:not(:disabled) {
+    background: #da190b;
+    transform: scale(1.05);
+}
+
+#restartBtn {
+    background: #9C27B0;
+}
+
+#restartBtn:hover:not(:disabled) {
+    background: #7B1FA2;
+    transform: scale(1.05);
 }
 
 #leaderboardBtn {
     background: #2196F3;
 }
 
-#startBtn:hover:not(:disabled), #leaderboardBtn:hover {
-    background: #45a049;
+#leaderboardBtn:hover {
+    background: #0b7dda;
     transform: scale(1.05);
 }
 
-#leaderboardBtn:hover {
-    background: #0b7dda;
-}
-
-#startBtn:disabled {
+button:disabled {
     background: #ccc;
     cursor: not-allowed;
+    opacity: 0.6;
 }
 
 .players-grid {

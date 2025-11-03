@@ -10,7 +10,13 @@
       "Bash(move client.js frontend:*)",
       "Bash(git init:*)",
       "Bash(git remote add:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nInitial commit: 4-Player Online Tetris\n\n- Backend: Node.js + WebSocket + Express API\n- Frontend: HTML5 Canvas + Vanilla JS\n- PostgreSQL leaderboard integration\n- Render deployment config (Singapore region)\n- Vercel frontend deployment ready\n- Real-time multiplayer for up to 4 players\n- Complete documentation and deployment guides\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git config:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd missing backend files\n\n- Add backend/server.js\n- Add backend/package.json\n- Fix .gitignore to only ignore root-level old files\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

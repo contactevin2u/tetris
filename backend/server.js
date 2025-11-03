@@ -80,7 +80,7 @@ const server = app.listen(PORT, () => {
 const wss = new WebSocket.Server({ server });
 
 const players = new Map();
-let gameStarted = false;
+let gameInProgress = false;
 
 wss.on('connection', (ws) => {
     // Find available player slot (0-3)
@@ -120,6 +120,13 @@ wss.on('connection', (ws) => {
         playerId: playerId
     });
 
+    // If game is in progress, notify the new player
+    if (gameInProgress) {
+        ws.send(JSON.stringify({
+            type: 'gameInProgress'
+        }));
+    }
+
     // Handle messages from client
     ws.on('message', (message) => {
         try {
@@ -127,10 +134,16 @@ wss.on('connection', (ws) => {
 
             switch (data.type) {
                 case 'startGame':
-                    if (!gameStarted && players.size >= 1) {
-                        gameStarted = true;
+                    if (!gameInProgress && players.size >= 1) {
+                        gameInProgress = true;
                         broadcast({ type: 'gameStart' });
+                        broadcastPlayerCount();
                         console.log('Game started with', players.size, 'players');
+                    } else if (gameInProgress) {
+                        // Game already in progress
+                        ws.send(JSON.stringify({
+                            type: 'gameInProgress'
+                        }));
                     }
                     break;
 
@@ -144,6 +157,23 @@ wss.on('connection', (ws) => {
                             state: data.state
                         }, ws);
                     }
+                    break;
+
+                case 'stopGame':
+                    gameInProgress = false;
+                    broadcast({ type: 'stopGame' });
+                    broadcastPlayerCount();
+                    console.log('Game stopped');
+                    break;
+
+                case 'gameEnded':
+                    gameInProgress = false;
+                    broadcast({
+                        type: 'gameEnded',
+                        playerCount: players.size
+                    });
+                    broadcastPlayerCount();
+                    console.log('Game ended - all players finished');
                     break;
 
                 case 'gameOver':
@@ -171,8 +201,8 @@ wss.on('connection', (ws) => {
             broadcastPlayerCount();
 
             // Reset game if not enough players
-            if (players.size < 1 && gameStarted) {
-                gameStarted = false;
+            if (players.size < 1 && gameInProgress) {
+                gameInProgress = false;
             }
         }
     });
@@ -190,7 +220,8 @@ function broadcast(data, exclude = null) {
 function broadcastPlayerCount() {
     broadcast({
         type: 'playerCount',
-        count: players.size
+        count: players.size,
+        gameInProgress: gameInProgress
     });
 }
 

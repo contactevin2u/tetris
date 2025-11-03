@@ -13,8 +13,14 @@
         <div class="game-info">
             <div class="player-id">Your Player ID: <span id="playerId">-</span></div>
             <div class="connection-status">Status: <span id="status">Connecting...</span></div>
-            <button id="startBtn" disabled>Start Game</button>
-            <button id="leaderboardBtn" onclick="loadLeaderboard()">View Leaderboard</button>
+            <div class="timer-display">Time Left: <span id="timer">2:00</span></div>
+            <div class="game-controls">
+                <button id="startBtn" disabled>Start Game</button>
+                <button id="pauseBtn" disabled>Pause</button>
+                <button id="stopBtn" disabled>Stop Game</button>
+                <button id="restartBtn" disabled>Restart</button>
+                <button id="leaderboardBtn" onclick="loadLeaderboard()">View Leaderboard</button>
+            </div>
         </div>
 
         <div class="players-grid">
