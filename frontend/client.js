@@ -50,6 +50,7 @@ function handleMessage(data) {
         case 'init':
             myPlayerId = data.playerId;
             document.getElementById('playerId').textContent = myPlayerId + 1;
+            updatePlayerSizing();
             updatePlayerStatus();
             break;
 
@@ -105,6 +106,21 @@ function updateStartButton(playerCount, gameInProgress) {
     } else {
         startBtn.disabled = false;
         startBtn.textContent = `Start Game (${playerCount}/4 players)`;
+    }
+}
+
+function updatePlayerSizing() {
+    // Update CSS classes based on which player is "me"
+    for (let i = 0; i < 4; i++) {
+        const container = document.querySelector(`.player-container:nth-child(${i + 1})`);
+        if (container) {
+            container.classList.remove('my-player', 'other-player');
+            if (i === myPlayerId) {
+                container.classList.add('my-player');
+            } else {
+                container.classList.add('other-player');
+            }
+        }
     }
 }
 

@@ -118,7 +118,7 @@ button:disabled {
 
 .players-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: 2fr 1fr;
     gap: 20px;
     margin-bottom: 30px;
 }
@@ -129,6 +129,47 @@ button:disabled {
     border-radius: 10px;
     backdrop-filter: blur(10px);
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+/* Main player - large display */
+.player-container.my-player {
+    grid-row: span 2;
+    background: rgba(255,215,0,0.15);
+    border: 3px solid rgba(255,215,0,0.4);
+    box-shadow: 0 12px 48px rgba(255,215,0,0.3);
+}
+
+.player-container.my-player .player-header h3 {
+    font-size: 1.8em;
+    color: #FFD700;
+}
+
+.player-container.my-player .score {
+    font-size: 1.4em;
+}
+
+/* Other players - smaller display */
+.player-container.other-player {
+    opacity: 0.8;
+    transform: scale(0.95);
+}
+
+.player-container.other-player .player-header h3 {
+    font-size: 1em;
+}
+
+.player-container.other-player .score {
+    font-size: 0.9em;
+}
+
+.player-container.other-player canvas {
+    transform: scale(0.9);
+    transform-origin: top left;
+}
+
+.player-container.other-player .preview-boxes {
+    transform: scale(0.85);
+    transform-origin: top left;
 }
 
 .player-header {
@@ -303,7 +344,11 @@ canvas {
 
 @media (max-width: 768px) {
     .players-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
+    }
+
+    .player-container.my-player {
+        grid-row: auto;
     }
 
     h1 {
@@ -319,5 +364,11 @@ canvas {
         width: 95%;
         margin: 10% auto;
         padding: 20px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1200px) {
+    .players-grid {
+        grid-template-columns: 1.5fr 1fr;
     }
 }
