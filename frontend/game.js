@@ -3,6 +3,45 @@ const COLS = 10;
 const ROWS = 20;
 const BLOCK_SIZE = 24;
 
+// Particle effect functions
+function createParticles(x, y, count, color) {
+    const overlay = document.getElementById('particleOverlay');
+    for (let i = 0; i < count; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        particle.style.backgroundColor = color;
+
+        const angle = (Math.PI * 2 * i) / count;
+        const distance = 100 + Math.random() * 100;
+        const tx = Math.cos(angle) * distance;
+        const ty = Math.sin(angle) * distance;
+
+        particle.style.setProperty('--tx', `${tx}px`);
+        particle.style.setProperty('--ty', `${ty}px`);
+
+        overlay.appendChild(particle);
+
+        setTimeout(() => particle.remove(), 1500);
+    }
+}
+
+function showSpecialMessage(text, isCombo = false) {
+    const message = document.createElement('div');
+    message.className = 'special-message';
+    if (isCombo) message.classList.add('combo-message');
+    message.textContent = text;
+    document.body.appendChild(message);
+
+    // Create particles at center
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    createParticles(centerX, centerY, 20, isCombo ? '#FF5722' : '#FFD700');
+
+    setTimeout(() => message.remove(), 2000);
+}
+
 // Tetromino shapes
 const SHAPES = {
     I: [[1,1,1,1]],
@@ -121,6 +160,12 @@ class TetrisGame {
         if (!this.checkCollision(newX, newY, this.currentPiece.shape)) {
             this.currentPiece.x = newX;
             this.currentPiece.y = newY;
+
+            // Play move sound only for my player
+            if (this.playerId == myPlayerId) {
+                soundManager.playMove();
+            }
+
             return true;
         }
 
@@ -142,6 +187,11 @@ class TetrisGame {
 
         if (!this.checkCollision(this.currentPiece.x, this.currentPiece.y, rotated)) {
             this.currentPiece.shape = rotated;
+
+            // Play rotation sound only for my player
+            if (this.playerId == myPlayerId) {
+                soundManager.playMove();
+            }
         }
     }
 
@@ -149,6 +199,11 @@ class TetrisGame {
         if (this.gameOver) return;
 
         while (this.move(0, 1)) {}
+
+        // Play hard drop sound only for my player
+        if (this.playerId == myPlayerId) {
+            soundManager.playDrop();
+        }
     }
 
     merge() {
@@ -189,16 +244,33 @@ class TetrisGame {
                 // Base score 50 + 20% bonus per combo
                 const comboBonus = Math.floor(50 * (this.comboCount * 0.2));
                 this.score += 50 + comboBonus;
+
+                // Play combo sound and show visual effect only for my player
+                if (this.playerId == myPlayerId) {
+                    soundManager.playCombo(this.comboCount);
+                    showSpecialMessage(`${this.comboCount}x COMBO!`, true);
+                }
             } else {
                 // Regular clear, reset combo
                 this.comboCount = 0;
                 this.score += linesClearedNow * 10;
+
+                // Play line clear sound only for my player
+                if (this.playerId == myPlayerId) {
+                    soundManager.playLineClear(linesClearedNow);
+                }
             }
 
             // Perfect Clear bonus: if all lines are cleared (grid is empty), award 120 points!
             if (this.isPerfectClear()) {
                 this.score += 120;
                 console.log('PERFECT CLEAR! +120 bonus points!');
+
+                // Play perfect clear sound and show visual effect only for my player
+                if (this.playerId == myPlayerId) {
+                    soundManager.playPerfectClear();
+                    showSpecialMessage('PERFECT CLEAR!', false);
+                }
             }
         } else {
             // No lines cleared, reset combo

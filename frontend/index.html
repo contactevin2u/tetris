@@ -7,19 +7,28 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Particle effects overlay -->
+    <div id="particleOverlay" class="particle-overlay"></div>
+
     <div class="container">
         <h1>4-Player Tetris Battle</h1>
 
         <div class="game-info">
-            <div class="player-id">Your Player ID: <span id="playerId">-</span></div>
-            <div class="connection-status">Status: <span id="status">Connecting...</span></div>
+            <div class="info-row">
+                <div class="player-id">Your Player ID: <span id="playerId">-</span></div>
+                <div class="connection-status">Status: <span id="status">Connecting...</span></div>
+                <div class="players-count">Players: <span id="playerCount">0/4</span></div>
+            </div>
             <div class="timer-display">Time Left: <span id="timer">2:00</span></div>
+            <div id="notification" class="notification hidden"></div>
             <div class="game-controls">
                 <button id="startBtn" disabled>Start Game</button>
                 <button id="pauseBtn" disabled>Pause</button>
                 <button id="stopBtn" disabled>Stop Game</button>
                 <button id="restartBtn" disabled>Restart</button>
+                <button id="newGameBtn" style="display:none;">New Game (Reset All)</button>
                 <button id="leaderboardBtn" onclick="loadLeaderboard()">View Leaderboard</button>
+                <button id="soundBtn" onclick="toggleSound()">🔊 Sound ON</button>
             </div>
         </div>
 
@@ -142,6 +151,7 @@
         </div>
     </div>
 
+    <script src="sounds.js"></script>
     <script src="game.js"></script>
     <script src="client.js"></script>
 </body>

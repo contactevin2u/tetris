@@ -176,6 +176,14 @@ wss.on('connection', (ws) => {
                     console.log('Game ended - all players finished');
                     break;
 
+                case 'newGame':
+                    // Reset game for all players
+                    gameInProgress = false;
+                    broadcast({ type: 'newGame' });
+                    broadcastPlayerCount();
+                    console.log('New game session initiated by a player');
+                    break;
+
                 case 'gameOver':
                     // Player can submit their score
                     console.log(`Player ${data.playerId} game over with score: ${data.score}`);

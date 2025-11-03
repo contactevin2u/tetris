@@ -55,13 +55,19 @@ function handleMessage(data) {
             break;
 
         case 'playerJoined':
+            showNotification(`Player ${data.playerId + 1} joined the game!`, 'info');
             updatePlayerStatus();
+            // Show new game button if game is in progress
+            if (isMyGameActive) {
+                document.getElementById('newGameBtn').style.display = 'inline-block';
+            }
             break;
 
         case 'playerLeft':
             if (games[data.playerId]) {
                 games[data.playerId] = null;
             }
+            showNotification(`Player ${data.playerId + 1} left the game`, 'warning');
             updatePlayerStatus();
             break;
 
@@ -91,11 +97,32 @@ function handleMessage(data) {
         case 'stopGame':
             stopGame();
             break;
+
+        case 'newGame':
+            // Server initiated new game for all
+            stopGame();
+            showNotification('New game session started! Get ready...', 'success');
+            break;
     }
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = `notification ${type}`;
+
+    // Auto-hide after 4 seconds
+    setTimeout(() => {
+        notification.classList.add('hidden');
+    }, 4000);
 }
 
 function updateStartButton(playerCount, gameInProgress) {
     const startBtn = document.getElementById('startBtn');
+    const playerCountEl = document.getElementById('playerCount');
+
+    // Update player count display
+    playerCountEl.textContent = `${playerCount}/4`;
 
     if (gameInProgress) {
         startBtn.disabled = true;
@@ -154,6 +181,10 @@ function updatePlayerStatus() {
 }
 
 function startGame() {
+    // Play game start sound
+    soundManager.playGameStart();
+    soundManager.startBackgroundMusic();
+
     // Initialize all game instances
     for (let i = 0; i < 4; i++) {
         games[i] = new TetrisGame(`canvas-${i}`);
@@ -177,6 +208,16 @@ function startGame() {
         if (!isPaused && timeRemaining > 0) {
             timeRemaining--;
             updateTimerDisplay();
+
+            // Play warning sound when time is running out
+            if (timeRemaining === 30 || timeRemaining === 10) {
+                soundManager.playWarning();
+            }
+
+            // Play countdown tick in last 5 seconds
+            if (timeRemaining <= 5 && timeRemaining > 0) {
+                soundManager.playCountdownTick();
+            }
 
             if (timeRemaining <= 0) {
                 // Time's up! End game
@@ -209,6 +250,8 @@ function startGame() {
                     // If it's my game, show leaderboard submission and notify server
                     if (index === myPlayerId && !game.scoreSubmitted) {
                         game.scoreSubmitted = true;
+                        soundManager.playGameOver();
+                        soundManager.stopBackgroundMusic();
                         showScoreSubmission(game.score, game.linesCleared || 0);
 
                         // Check if all players are done
@@ -291,6 +334,9 @@ function stopGame() {
     isMyGameActive = false;
     isPaused = false;
 
+    // Stop background music
+    soundManager.stopBackgroundMusic();
+
     if (dropInterval) clearInterval(dropInterval);
     if (animationFrameId) cancelAnimationFrame(animationFrameId);
     if (gameTimer) clearInterval(gameTimer);
@@ -304,6 +350,7 @@ function stopGame() {
     document.getElementById('pauseBtn').disabled = true;
     document.getElementById('stopBtn').disabled = true;
     document.getElementById('restartBtn').disabled = true;
+    document.getElementById('newGameBtn').style.display = 'none';
     document.getElementById('pauseBtn').textContent = 'Pause';
 
     // Clear all games
@@ -467,6 +514,12 @@ document.getElementById('restartBtn').addEventListener('click', () => {
     restartGame();
 });
 
+document.getElementById('newGameBtn').addEventListener('click', () => {
+    if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'newGame' }));
+    }
+});
+
 // Initialize player layout on load
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize all players in "other" column until we know which one is us
@@ -477,3 +530,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Initialize connection
 connect();
+
+// Sound toggle function
+function toggleSound() {
+    const enabled = soundManager.toggle();
+    const btn = document.getElementById('soundBtn');
+    if (enabled) {
+        btn.textContent = '🔊 Sound ON';
+        soundManager.playBeep(440, 0.1);
+    } else {
+        btn.textContent = '🔇 Sound OFF';
+    }
+}
