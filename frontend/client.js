@@ -142,11 +142,8 @@ function updatePlayerSizing() {
 
     if (!mainColumn || !othersColumn) return;
 
-    // Clear both columns
-    mainColumn.innerHTML = '';
-    othersColumn.innerHTML = '';
-
     // Move player containers to appropriate columns
+    // Note: appendChild automatically removes from previous parent
     for (let i = 0; i < 4; i++) {
         const container = document.querySelector(`.player-container[data-player-id="${i}"]`);
         if (container) {
@@ -156,11 +153,15 @@ function updatePlayerSizing() {
             if (myPlayerId >= 0 && i === myPlayerId) {
                 // This is my player - put in main column
                 container.classList.add('my-player');
-                mainColumn.appendChild(container);
+                if (container.parentElement !== mainColumn) {
+                    mainColumn.appendChild(container);
+                }
             } else {
                 // Other players - put in others column
                 container.classList.add('other-player');
-                othersColumn.appendChild(container);
+                if (container.parentElement !== othersColumn) {
+                    othersColumn.appendChild(container);
+                }
             }
         }
     }
@@ -189,9 +190,14 @@ function startGame() {
     soundManager.playGameStart();
     soundManager.startBackgroundMusic();
 
-    // Initialize all game instances
+    // Initialize all game instances (only if canvas exists)
     for (let i = 0; i < 4; i++) {
-        games[i] = new TetrisGame(`canvas-${i}`);
+        const canvas = document.getElementById(`canvas-${i}`);
+        if (canvas) {
+            games[i] = new TetrisGame(`canvas-${i}`);
+        } else {
+            games[i] = null;
+        }
     }
 
     isMyGameActive = true;
@@ -244,12 +250,18 @@ function startGame() {
         games.forEach((game, index) => {
             if (game) {
                 game.draw();
-                document.getElementById(`score-${index}`).textContent = game.score;
+
+                const scoreEl = document.getElementById(`score-${index}`);
+                if (scoreEl) {
+                    scoreEl.textContent = game.score;
+                }
 
                 if (game.gameOver) {
                     const statusEl = document.getElementById(`status-${index}`);
-                    statusEl.textContent = 'GAME OVER';
-                    statusEl.style.background = '#f44336';
+                    if (statusEl) {
+                        statusEl.textContent = 'GAME OVER';
+                        statusEl.style.background = '#f44336';
+                    }
 
                     // If it's my game, show leaderboard submission and notify server
                     if (index === myPlayerId && !game.scoreSubmitted) {
@@ -361,15 +373,22 @@ function stopGame() {
     for (let i = 0; i < 4; i++) {
         if (games[i]) {
             const canvas = document.getElementById(`canvas-${i}`);
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#000';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
             games[i] = null;
         }
-        document.getElementById(`score-${i}`).textContent = '0';
+        const scoreEl = document.getElementById(`score-${i}`);
+        if (scoreEl) {
+            scoreEl.textContent = '0';
+        }
         const statusEl = document.getElementById(`status-${i}`);
-        statusEl.textContent = 'Waiting...';
-        statusEl.style.background = 'rgba(0,0,0,0.3)';
+        if (statusEl) {
+            statusEl.textContent = 'Waiting...';
+            statusEl.style.background = 'rgba(0,0,0,0.3)';
+        }
     }
 
     // Notify server
@@ -526,11 +545,9 @@ document.getElementById('newGameBtn').addEventListener('click', () => {
 
 // Initialize player layout and connection on load
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize all players in "other" column until we know which one is us
-    updatePlayerSizing();
     // Load leaderboard
     loadLeaderboard();
-    // Connect to server after DOM is ready
+    // Connect to server after DOM is ready (updatePlayerSizing will be called when we receive init message)
     connect();
 });
 
