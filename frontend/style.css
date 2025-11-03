@@ -392,9 +392,7 @@ button:disabled {
 }
 
 .players-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    display: flex;
     gap: 10px;
     margin-bottom: 10px;
     height: calc(100vh - 220px);
@@ -403,17 +401,22 @@ button:disabled {
 }
 
 .main-player-column {
-    display: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .other-players-column {
-    display: none;
+    flex: 0.33;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
 }
 
-/* All players in grid - equal sizing */
+/* Player container styling */
 .player-container {
     width: 100%;
-    height: 100%;
     display: flex;
     flex-direction: column;
     background: rgba(255,255,255,0.05);
@@ -425,6 +428,17 @@ button:disabled {
         inset 0 0 20px rgba(120, 119, 198, 0.05);
     border: 2px solid rgba(255,255,255,0.1);
     transition: all 0.3s ease;
+}
+
+/* Main player takes full height */
+.main-player-column .player-container {
+    height: 100%;
+}
+
+/* Other players share the space */
+.other-players-column .player-container {
+    flex: 1;
+    min-height: 150px;
 }
 
 .player-container:hover {
@@ -780,12 +794,16 @@ canvas {
     }
 
     .players-grid {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto;
+        flex-direction: column;
         height: auto;
         min-height: auto;
         gap: 10px;
         margin-bottom: 120px; /* Space for mobile controls */
+    }
+
+    .main-player-column,
+    .other-players-column {
+        flex: 1;
     }
 
     .player-container {
