@@ -110,15 +110,28 @@ function updateStartButton(playerCount, gameInProgress) {
 }
 
 function updatePlayerSizing() {
-    // Update CSS classes based on which player is "me"
+    const mainColumn = document.querySelector('.main-player-column');
+    const othersColumn = document.querySelector('.other-players-column');
+
+    // Clear both columns
+    mainColumn.innerHTML = '';
+    othersColumn.innerHTML = '';
+
+    // Move player containers to appropriate columns
     for (let i = 0; i < 4; i++) {
-        const container = document.querySelector(`.player-container:nth-child(${i + 1})`);
+        const container = document.querySelector(`.player-container[data-player-id="${i}"]`);
         if (container) {
             container.classList.remove('my-player', 'other-player');
+            container.style.display = 'block';
+
             if (i === myPlayerId) {
+                // This is my player - put in main column
                 container.classList.add('my-player');
+                mainColumn.appendChild(container);
             } else {
+                // Other players - put in others column
                 container.classList.add('other-player');
+                othersColumn.appendChild(container);
             }
         }
     }
@@ -379,10 +392,6 @@ function showScoreSubmission(score, linesCleared) {
     }
 }
 
-// Load leaderboard on page load
-document.addEventListener('DOMContentLoaded', () => {
-    loadLeaderboard();
-});
 
 function updateGameState(playerId, state) {
     if (games[playerId] && playerId !== myPlayerId) {
@@ -456,6 +465,14 @@ document.getElementById('stopBtn').addEventListener('click', () => {
 
 document.getElementById('restartBtn').addEventListener('click', () => {
     restartGame();
+});
+
+// Initialize player layout on load
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize all players in "other" column until we know which one is us
+    updatePlayerSizing();
+    // Load leaderboard
+    loadLeaderboard();
 });
 
 // Initialize connection
