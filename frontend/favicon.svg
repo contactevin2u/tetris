@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" fill="#0f0c29"/>
+
+  <!-- Tetris blocks -->
+  <g fill="#7877C6" stroke="#fff" stroke-width="2">
+    <rect x="20" y="20" width="20" height="20"/>
+    <rect x="40" y="20" width="20" height="20"/>
+    <rect x="60" y="20" width="20" height="20"/>
+    <rect x="40" y="40" width="20" height="20"/>
+  </g>
+
+  <g fill="#FFD700" stroke="#fff" stroke-width="2">
+    <rect x="20" y="60" width="20" height="20"/>
+    <rect x="40" y="60" width="20" height="20"/>
+  </g>
+
+  <g fill="#FF5722" stroke="#fff" stroke-width="2">
+    <rect x="60" y="60" width="20" height="20"/>
+    <rect x="60" y="40" width="20" height="20"/>
+  </g>
+</svg>
