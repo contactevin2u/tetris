@@ -543,3 +543,157 @@ function toggleSound() {
         btn.textContent = '🔇 Sound OFF';
     }
 }
+
+// Mobile Controls
+function isMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+        || window.innerWidth <= 968;
+}
+
+// Show mobile controls if on mobile device
+if (isMobile()) {
+    const mobileControls = document.querySelector('.mobile-controls');
+    if (mobileControls) {
+        mobileControls.classList.add('visible');
+    }
+}
+
+// Touch control handlers
+function handleMobileControl(action) {
+    if (!isMyGameActive || isPaused || !games[myPlayerId] || games[myPlayerId].gameOver) {
+        return;
+    }
+
+    switch (action) {
+        case 'left':
+            games[myPlayerId].move(-1, 0);
+            sendGameState();
+            break;
+        case 'right':
+            games[myPlayerId].move(1, 0);
+            sendGameState();
+            break;
+        case 'down':
+            games[myPlayerId].move(0, 1);
+            sendGameState();
+            break;
+        case 'up':
+        case 'rotate':
+            games[myPlayerId].rotate();
+            sendGameState();
+            break;
+        case 'drop':
+            games[myPlayerId].hardDrop();
+            sendGameState();
+            break;
+        case 'hold':
+            games[myPlayerId].holdPiece();
+            sendGameState();
+            break;
+    }
+}
+
+// Add event listeners for mobile controls
+document.getElementById('left-btn')?.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    handleMobileControl('left');
+});
+
+document.getElementById('right-btn')?.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    handleMobileControl('right');
+});
+
+document.getElementById('down-btn')?.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    handleMobileControl('down');
+});
+
+document.getElementById('up-btn')?.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    handleMobileControl('up');
+});
+
+document.getElementById('rotate-btn')?.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    handleMobileControl('rotate');
+});
+
+document.getElementById('drop-btn')?.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    handleMobileControl('drop');
+});
+
+document.getElementById('hold-btn')?.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    handleMobileControl('hold');
+});
+
+// Swipe gesture detection on canvas
+let touchStartX = 0;
+let touchStartY = 0;
+let touchEndX = 0;
+let touchEndY = 0;
+
+function handleSwipeGesture() {
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
+    const minSwipeDistance = 30;
+
+    // Determine if it's a horizontal or vertical swipe
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontal swipe
+        if (Math.abs(deltaX) > minSwipeDistance) {
+            if (deltaX > 0) {
+                handleMobileControl('right');
+            } else {
+                handleMobileControl('left');
+            }
+        }
+    } else {
+        // Vertical swipe
+        if (Math.abs(deltaY) > minSwipeDistance) {
+            if (deltaY > 0) {
+                handleMobileControl('down');
+            } else {
+                handleMobileControl('drop'); // Swipe up for hard drop
+            }
+        }
+    }
+}
+
+// Add swipe listeners to main canvas
+const mainCanvas = document.getElementById('canvas-0');
+if (mainCanvas && isMobile()) {
+    mainCanvas.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }, false);
+
+    mainCanvas.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        handleSwipeGesture();
+    }, false);
+
+    // Tap to rotate
+    mainCanvas.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+            // Two finger tap for hold
+            e.preventDefault();
+            handleMobileControl('hold');
+        }
+    }, false);
+}
+
+// Update mobile controls visibility when window resizes
+window.addEventListener('resize', () => {
+    const mobileControls = document.querySelector('.mobile-controls');
+    if (mobileControls) {
+        if (isMobile()) {
+            mobileControls.classList.add('visible');
+        } else {
+            mobileControls.classList.remove('visible');
+        }
+    }
+});

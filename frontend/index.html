@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>4-Player Tetris Online</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="style.css">
@@ -128,6 +131,21 @@
         <div class="controls">
             <h3>Controls:</h3>
             <p>Arrow Left/Right: Move | Arrow Up: Rotate | Arrow Down: Soft Drop | Space: Hard Drop | Shift: Hold/Swap</p>
+        </div>
+    </div>
+
+    <!-- Mobile Controls -->
+    <div class="mobile-controls">
+        <div class="control-pad">
+            <div class="control-btn" id="up-btn">↑</div>
+            <div class="control-btn" id="left-btn">←</div>
+            <div class="control-btn" id="down-btn">↓</div>
+            <div class="control-btn" id="right-btn">→</div>
+        </div>
+        <div class="action-buttons">
+            <div class="control-btn rotate" id="rotate-btn">🔄</div>
+            <div class="control-btn drop" id="drop-btn">⬇</div>
+            <div class="control-btn hold" id="hold-btn">💾</div>
         </div>
     </div>
 
