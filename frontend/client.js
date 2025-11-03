@@ -7,7 +7,9 @@ let isPaused = false;
 let dropInterval;
 let animationFrameId;
 let gameTimer;
-let timeRemaining = 120; // 2 minutes in seconds
+let timeRemaining = 240; // 4 minutes in seconds
+let currentSpeed = 1000; // Initial drop speed in ms
+let baseSpeed = 1000; // Base speed
 
 // Configuration - auto-detects environment
 const API_URL = window.location.hostname === 'localhost'
@@ -102,6 +104,14 @@ function handleMessage(data) {
             // Server initiated new game for all
             stopGame();
             showNotification('New game session started! Get ready...', 'success');
+            break;
+
+        case 'lineAttack':
+            // Receive line attack from another player
+            if (games[myPlayerId] && !games[myPlayerId].gameOver) {
+                games[myPlayerId].addGarbageLines(data.garbageLines);
+                showNotification(`Player ${data.fromPlayerId + 1} sent ${data.garbageLines} line(s)!`, 'warning');
+            }
             break;
     }
 }
@@ -202,7 +212,8 @@ function startGame() {
 
     isMyGameActive = true;
     isPaused = false;
-    timeRemaining = 120; // Reset timer to 2 minutes
+    timeRemaining = 240; // Reset timer to 4 minutes
+    currentSpeed = 1000; // Reset speed
 
     // Update button states
     document.getElementById('startBtn').disabled = true;
@@ -218,6 +229,14 @@ function startGame() {
         if (!isPaused && timeRemaining > 0) {
             timeRemaining--;
             updateTimerDisplay();
+
+            // Gradually increase speed every 30 seconds
+            // Speed increases at: 210s, 180s, 150s, 120s, 90s, 60s, 30s
+            if (timeRemaining % 30 === 0 && currentSpeed > 300) {
+                currentSpeed = Math.max(300, currentSpeed - 100); // Minimum 300ms, decrease by 100ms
+                updateDropSpeed();
+                console.log(`Speed increased! New speed: ${currentSpeed}ms`);
+            }
 
             // Play warning sound when time is running out
             if (timeRemaining === 30 || timeRemaining === 10) {
@@ -236,14 +255,19 @@ function startGame() {
         }
     }, 1000);
 
-    // Start game loop
-    if (dropInterval) clearInterval(dropInterval);
-    dropInterval = setInterval(() => {
-        if (isMyGameActive && !isPaused && games[myPlayerId] && !games[myPlayerId].gameOver) {
-            games[myPlayerId].move(0, 1);
-            sendGameState();
-        }
-    }, 1000);
+    // Start game loop with gradual speed increase
+    function updateDropSpeed() {
+        if (dropInterval) clearInterval(dropInterval);
+
+        dropInterval = setInterval(() => {
+            if (isMyGameActive && !isPaused && games[myPlayerId] && !games[myPlayerId].gameOver) {
+                games[myPlayerId].move(0, 1);
+                sendGameState();
+            }
+        }, currentSpeed);
+    }
+
+    updateDropSpeed();
 
     // Draw all games
     function gameLoop() {
@@ -358,7 +382,8 @@ function stopGame() {
     if (gameTimer) clearInterval(gameTimer);
 
     // Reset timer display
-    timeRemaining = 120;
+    timeRemaining = 240;
+    currentSpeed = 1000;
     updateTimerDisplay();
 
     // Reset button states
@@ -475,6 +500,18 @@ function sendGameState() {
             type: 'gameState',
             state: games[myPlayerId].getState()
         }));
+    }
+}
+
+// Send line attack to opponents
+function sendLineAttackToServer(linesCleared, garbageLines) {
+    if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({
+            type: 'lineAttack',
+            linesCleared: linesCleared,
+            garbageLines: garbageLines
+        }));
+        console.log(`Sending ${garbageLines} garbage line(s) to opponents!`);
     }
 }
 

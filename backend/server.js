@@ -188,6 +188,22 @@ wss.on('connection', (ws) => {
                     // Player can submit their score
                     console.log(`Player ${data.playerId} game over with score: ${data.score}`);
                     break;
+
+                case 'lineAttack':
+                    // Player cleared lines and is attacking opponents
+                    const attacker = players.get(ws);
+                    if (attacker) {
+                        console.log(`Player ${attacker.id} cleared ${data.linesCleared} line(s), sending ${data.garbageLines} garbage line(s) to opponents`);
+
+                        // Send garbage lines to all other active players
+                        broadcast({
+                            type: 'lineAttack',
+                            fromPlayerId: attacker.id,
+                            linesCleared: data.linesCleared,
+                            garbageLines: data.garbageLines
+                        }, ws);
+                    }
+                    break;
             }
         } catch (error) {
             console.error('Error handling message:', error);

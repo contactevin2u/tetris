@@ -239,6 +239,12 @@ class TetrisGame {
         if (linesClearedNow > 0) {
             this.linesCleared += linesClearedNow;
 
+            // Calculate garbage lines to send to opponents
+            let garbageLinesToSend = 0;
+            if (linesClearedNow === 2) garbageLinesToSend = 1;
+            else if (linesClearedNow === 3) garbageLinesToSend = 2;
+            else if (linesClearedNow === 4) garbageLinesToSend = 4; // Tetris!
+
             // New scoring system
             // 1 line = 10 points, 2 lines = 20 points
             // 3+ lines = 50 base points + 20% cumulative combo bonus
@@ -268,6 +274,7 @@ class TetrisGame {
             // Perfect Clear bonus: if all lines are cleared (grid is empty), award 120 points!
             if (this.isPerfectClear()) {
                 this.score += 120;
+                garbageLinesToSend += 4; // Perfect clear sends extra garbage!
                 console.log('PERFECT CLEAR! +120 bonus points!');
 
                 // Play perfect clear sound and show visual effect only for my player
@@ -275,6 +282,11 @@ class TetrisGame {
                     soundManager.playPerfectClear();
                     showSpecialMessage('PERFECT CLEAR!', false);
                 }
+            }
+
+            // Send garbage lines to opponents (only for my player)
+            if (this.playerId == myPlayerId && garbageLinesToSend > 0) {
+                this.sendLineAttack(linesClearedNow, garbageLinesToSend);
             }
         } else {
             // No lines cleared, reset combo
@@ -285,6 +297,37 @@ class TetrisGame {
     isPerfectClear() {
         // Check if the entire grid is empty (all cells are 0)
         return this.grid.every(row => row.every(cell => cell === 0));
+    }
+
+    addGarbageLines(numLines) {
+        // Add garbage lines to the bottom of the grid
+        // First, check if adding lines would cause game over
+        if (this.gameOver) return;
+
+        // Remove top rows
+        this.grid.splice(0, numLines);
+
+        // Add garbage rows at the bottom
+        for (let i = 0; i < numLines; i++) {
+            const garbageRow = Array(COLS).fill('#666666'); // Gray garbage blocks
+            // Create a random gap in the garbage line
+            const gapPosition = Math.floor(Math.random() * COLS);
+            garbageRow[gapPosition] = 0; // Empty space for player to exploit
+            this.grid.push(garbageRow);
+        }
+
+        // Check if current piece collides with new garbage
+        if (this.currentPiece && this.checkCollision(this.currentPiece.x, this.currentPiece.y, this.currentPiece.shape)) {
+            this.gameOver = true;
+        }
+    }
+
+    sendLineAttack(linesCleared, garbageLines) {
+        // This will be called from client.js
+        // Send attack notification to server
+        if (typeof sendLineAttackToServer === 'function') {
+            sendLineAttackToServer(linesCleared, garbageLines);
+        }
     }
 
     holdPiece() {
