@@ -4,7 +4,7 @@ node_modules/
 .DS_Store
 .vercel
 
-# Keep old files out of git
-server.js
-package.json
-package-lock.json
+# Keep old root-level files out of git (not subdirectories)
+/server.js
+/package.json
+/package-lock.json
