@@ -156,7 +156,7 @@ class TetrisGame {
     }
 
     move(dx, dy) {
-        if (this.gameOver) return false;
+        if (this.gameOver || !this.currentPiece) return false;
 
         const newX = this.currentPiece.x + dx;
         const newY = this.currentPiece.y + dy;
@@ -376,6 +376,8 @@ class TetrisGame {
     }
 
     draw() {
+        if (!this.canvas || !this.ctx) return;
+
         // Clear canvas
         this.ctx.fillStyle = '#000';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);

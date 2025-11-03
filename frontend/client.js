@@ -140,6 +140,8 @@ function updatePlayerSizing() {
     const mainColumn = document.querySelector('.main-player-column');
     const othersColumn = document.querySelector('.other-players-column');
 
+    if (!mainColumn || !othersColumn) return;
+
     // Clear both columns
     mainColumn.innerHTML = '';
     othersColumn.innerHTML = '';
@@ -151,7 +153,7 @@ function updatePlayerSizing() {
             container.classList.remove('my-player', 'other-player');
             container.style.display = 'block';
 
-            if (i === myPlayerId) {
+            if (myPlayerId >= 0 && i === myPlayerId) {
                 // This is my player - put in main column
                 container.classList.add('my-player');
                 mainColumn.appendChild(container);
