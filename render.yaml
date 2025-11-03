@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: tetris-backend
+    runtime: node
+    region: singapore
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tetris-db
+          property: connectionString
+    healthCheckPath: /api/health
+
+databases:
+  - name: tetris-db
+    databaseName: tetris
+    region: singapore
+    plan: free

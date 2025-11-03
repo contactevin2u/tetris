@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install)",
+      "Bash(dir:*)",
+      "Bash(node server.js:*)",
+      "Bash(move index.html frontend )",
+      "Bash(move style.css frontend )",
+      "Bash(move:*)",
+      "Bash(move client.js frontend:*)",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
