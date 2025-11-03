@@ -415,6 +415,11 @@ document.addEventListener('keydown', (e) => {
             sendGameState();
             e.preventDefault();
             break;
+        case 'Shift':
+            games[myPlayerId].holdPiece();
+            sendGameState();
+            e.preventDefault();
+            break;
     }
 });
 

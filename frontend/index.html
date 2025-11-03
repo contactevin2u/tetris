@@ -29,7 +29,19 @@
                     <h3>Player 1</h3>
                     <div class="score">Score: <span id="score-0">0</span></div>
                 </div>
-                <canvas id="canvas-0" width="240" height="480"></canvas>
+                <div class="game-layout">
+                    <div class="preview-boxes">
+                        <div class="preview-box">
+                            <div class="preview-label">Hold</div>
+                            <canvas id="hold-0" width="96" height="96"></canvas>
+                        </div>
+                        <div class="preview-box">
+                            <div class="preview-label">Next</div>
+                            <canvas id="next-0" width="96" height="96"></canvas>
+                        </div>
+                    </div>
+                    <canvas id="canvas-0" width="240" height="480"></canvas>
+                </div>
                 <div class="player-status" id="status-0">Waiting...</div>
             </div>
 
@@ -38,7 +50,19 @@
                     <h3>Player 2</h3>
                     <div class="score">Score: <span id="score-1">0</span></div>
                 </div>
-                <canvas id="canvas-1" width="240" height="480"></canvas>
+                <div class="game-layout">
+                    <div class="preview-boxes">
+                        <div class="preview-box">
+                            <div class="preview-label">Hold</div>
+                            <canvas id="hold-1" width="96" height="96"></canvas>
+                        </div>
+                        <div class="preview-box">
+                            <div class="preview-label">Next</div>
+                            <canvas id="next-1" width="96" height="96"></canvas>
+                        </div>
+                    </div>
+                    <canvas id="canvas-1" width="240" height="480"></canvas>
+                </div>
                 <div class="player-status" id="status-1">Waiting...</div>
             </div>
 
@@ -47,7 +71,19 @@
                     <h3>Player 3</h3>
                     <div class="score">Score: <span id="score-2">0</span></div>
                 </div>
-                <canvas id="canvas-2" width="240" height="480"></canvas>
+                <div class="game-layout">
+                    <div class="preview-boxes">
+                        <div class="preview-box">
+                            <div class="preview-label">Hold</div>
+                            <canvas id="hold-2" width="96" height="96"></canvas>
+                        </div>
+                        <div class="preview-box">
+                            <div class="preview-label">Next</div>
+                            <canvas id="next-2" width="96" height="96"></canvas>
+                        </div>
+                    </div>
+                    <canvas id="canvas-2" width="240" height="480"></canvas>
+                </div>
                 <div class="player-status" id="status-2">Waiting...</div>
             </div>
 
@@ -56,14 +92,26 @@
                     <h3>Player 4</h3>
                     <div class="score">Score: <span id="score-3">0</span></div>
                 </div>
-                <canvas id="canvas-3" width="240" height="480"></canvas>
+                <div class="game-layout">
+                    <div class="preview-boxes">
+                        <div class="preview-box">
+                            <div class="preview-label">Hold</div>
+                            <canvas id="hold-3" width="96" height="96"></canvas>
+                        </div>
+                        <div class="preview-box">
+                            <div class="preview-label">Next</div>
+                            <canvas id="next-3" width="96" height="96"></canvas>
+                        </div>
+                    </div>
+                    <canvas id="canvas-3" width="240" height="480"></canvas>
+                </div>
                 <div class="player-status" id="status-3">Waiting...</div>
             </div>
         </div>
 
         <div class="controls">
             <h3>Controls:</h3>
-            <p>Arrow Left/Right: Move | Arrow Up: Rotate | Arrow Down: Soft Drop | Space: Hard Drop</p>
+            <p>Arrow Left/Right: Move | Arrow Up: Rotate | Arrow Down: Soft Drop | Space: Hard Drop | Shift: Hold/Swap</p>
         </div>
     </div>
 

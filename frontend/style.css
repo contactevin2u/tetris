@@ -147,13 +147,49 @@ button:disabled {
     font-weight: bold;
 }
 
+.game-layout {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.preview-boxes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.preview-box {
+    background: rgba(0,0,0,0.3);
+    padding: 8px;
+    border-radius: 5px;
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+.preview-label {
+    text-align: center;
+    font-size: 0.85em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #FFD700;
+}
+
+.preview-box canvas {
+    background: #000;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 3px;
+}
+
 canvas {
     display: block;
-    width: 100%;
-    height: auto;
     background: #000;
     border: 3px solid rgba(255,255,255,0.3);
     border-radius: 5px;
+}
+
+#canvas-0, #canvas-1, #canvas-2, #canvas-3 {
+    width: 100%;
+    height: auto;
 }
 
 .player-status {

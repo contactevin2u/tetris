@@ -28,6 +28,11 @@ class TetrisGame {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
         this.ctx = this.canvas.getContext('2d');
+        this.playerId = canvasId.split('-')[1];
+        this.holdCanvas = document.getElementById(`hold-${this.playerId}`);
+        this.nextCanvas = document.getElementById(`next-${this.playerId}`);
+        this.holdCtx = this.holdCanvas ? this.holdCanvas.getContext('2d') : null;
+        this.nextCtx = this.nextCanvas ? this.nextCanvas.getContext('2d') : null;
         this.reset();
     }
 
@@ -38,23 +43,53 @@ class TetrisGame {
         this.comboCount = 0;
         this.gameOver = false;
         this.currentPiece = null;
+        this.nextPieceData = null;
+        this.heldPiece = null;
+        this.canHold = true; // Can only hold once per piece drop
         this.scoreSubmitted = false;
-        this.nextPiece();
+        this.generateNextPiece();
+        this.spawnPiece();
+    }
+
+    generateRandomPiece() {
+        const shapes = Object.keys(SHAPES);
+        const shapeKey = shapes[Math.floor(Math.random() * shapes.length)];
+        return {
+            shapeKey: shapeKey,
+            shape: SHAPES[shapeKey],
+            color: COLORS[shapeKey]
+        };
+    }
+
+    generateNextPiece() {
+        this.nextPieceData = this.generateRandomPiece();
+        this.drawPreview();
+    }
+
+    spawnPiece() {
+        if (this.nextPieceData) {
+            this.currentPiece = {
+                shapeKey: this.nextPieceData.shapeKey,
+                shape: this.nextPieceData.shape,
+                color: this.nextPieceData.color,
+                x: Math.floor(COLS / 2) - 1,
+                y: 0
+            };
+
+            // Generate the next piece for preview
+            this.generateNextPiece();
+
+            // Reset hold availability
+            this.canHold = true;
+
+            if (this.checkCollision(this.currentPiece.x, this.currentPiece.y, this.currentPiece.shape)) {
+                this.gameOver = true;
+            }
+        }
     }
 
     nextPiece() {
-        const shapes = Object.keys(SHAPES);
-        const shapeKey = shapes[Math.floor(Math.random() * shapes.length)];
-        this.currentPiece = {
-            shape: SHAPES[shapeKey],
-            color: COLORS[shapeKey],
-            x: Math.floor(COLS / 2) - 1,
-            y: 0
-        };
-
-        if (this.checkCollision(this.currentPiece.x, this.currentPiece.y, this.currentPiece.shape)) {
-            this.gameOver = true;
-        }
+        this.spawnPiece();
     }
 
     checkCollision(x, y, shape) {
@@ -176,6 +211,94 @@ class TetrisGame {
         return this.grid.every(row => row.every(cell => cell === 0));
     }
 
+    holdPiece() {
+        if (!this.canHold || this.gameOver) return;
+
+        if (this.heldPiece === null) {
+            // First hold - store current piece and spawn next
+            this.heldPiece = {
+                shapeKey: this.currentPiece.shapeKey,
+                shape: SHAPES[this.currentPiece.shapeKey],
+                color: this.currentPiece.color
+            };
+            this.spawnPiece();
+        } else {
+            // Swap current piece with held piece
+            const temp = {
+                shapeKey: this.currentPiece.shapeKey,
+                shape: SHAPES[this.currentPiece.shapeKey],
+                color: this.currentPiece.color
+            };
+
+            this.currentPiece = {
+                shapeKey: this.heldPiece.shapeKey,
+                shape: this.heldPiece.shape,
+                color: this.heldPiece.color,
+                x: Math.floor(COLS / 2) - 1,
+                y: 0
+            };
+
+            this.heldPiece = temp;
+        }
+
+        this.canHold = false; // Can't hold again until next piece
+        this.drawPreview();
+    }
+
+    drawPreview() {
+        // Draw next piece
+        if (this.nextCtx && this.nextPieceData) {
+            this.nextCtx.fillStyle = '#000';
+            this.nextCtx.fillRect(0, 0, this.nextCanvas.width, this.nextCanvas.height);
+
+            const shape = this.nextPieceData.shape;
+            const blockSize = 20;
+            const offsetX = (this.nextCanvas.width - shape[0].length * blockSize) / 2;
+            const offsetY = (this.nextCanvas.height - shape.length * blockSize) / 2;
+
+            this.nextCtx.fillStyle = this.nextPieceData.color;
+            shape.forEach((row, y) => {
+                row.forEach((value, x) => {
+                    if (value) {
+                        this.nextCtx.fillRect(
+                            offsetX + x * blockSize,
+                            offsetY + y * blockSize,
+                            blockSize - 1,
+                            blockSize - 1
+                        );
+                    }
+                });
+            });
+        }
+
+        // Draw held piece
+        if (this.holdCtx) {
+            this.holdCtx.fillStyle = '#000';
+            this.holdCtx.fillRect(0, 0, this.holdCanvas.width, this.holdCanvas.height);
+
+            if (this.heldPiece) {
+                const shape = this.heldPiece.shape;
+                const blockSize = 20;
+                const offsetX = (this.holdCanvas.width - shape[0].length * blockSize) / 2;
+                const offsetY = (this.holdCanvas.height - shape.length * blockSize) / 2;
+
+                this.holdCtx.fillStyle = this.heldPiece.color;
+                shape.forEach((row, y) => {
+                    row.forEach((value, x) => {
+                        if (value) {
+                            this.holdCtx.fillRect(
+                                offsetX + x * blockSize,
+                                offsetY + y * blockSize,
+                                blockSize - 1,
+                                blockSize - 1
+                            );
+                        }
+                    });
+                });
+            }
+        }
+    }
+
     draw() {
         // Clear canvas
         this.ctx.fillStyle = '#000';
@@ -236,7 +359,9 @@ class TetrisGame {
             score: this.score,
             linesCleared: this.linesCleared,
             gameOver: this.gameOver,
-            currentPiece: this.currentPiece
+            currentPiece: this.currentPiece,
+            nextPieceData: this.nextPieceData,
+            heldPiece: this.heldPiece
         };
     }
 
@@ -246,5 +371,8 @@ class TetrisGame {
         this.linesCleared = state.linesCleared || 0;
         this.gameOver = state.gameOver;
         this.currentPiece = state.currentPiece;
+        this.nextPieceData = state.nextPieceData;
+        this.heldPiece = state.heldPiece;
+        this.drawPreview();
     }
 }
