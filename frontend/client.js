@@ -167,6 +167,8 @@ function updatePlayerSizing() {
 function updatePlayerStatus() {
     for (let i = 0; i < 4; i++) {
         const statusEl = document.getElementById(`status-${i}`);
+        if (!statusEl) continue; // Skip if element not found
+
         if (i === myPlayerId) {
             statusEl.textContent = 'YOU';
             statusEl.style.background = '#4CAF50';
@@ -520,16 +522,15 @@ document.getElementById('newGameBtn').addEventListener('click', () => {
     }
 });
 
-// Initialize player layout on load
+// Initialize player layout and connection on load
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize all players in "other" column until we know which one is us
     updatePlayerSizing();
     // Load leaderboard
     loadLeaderboard();
+    // Connect to server after DOM is ready
+    connect();
 });
-
-// Initialize connection
-connect();
 
 // Sound toggle function
 function toggleSound() {

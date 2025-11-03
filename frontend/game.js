@@ -66,6 +66,10 @@ const COLORS = {
 class TetrisGame {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
+        if (!this.canvas) {
+            console.error(`Canvas ${canvasId} not found`);
+            return;
+        }
         this.ctx = this.canvas.getContext('2d');
         this.playerId = canvasId.split('-')[1];
         this.holdCanvas = document.getElementById(`hold-${this.playerId}`);
