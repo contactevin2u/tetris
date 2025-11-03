@@ -1,7 +1,7 @@
 // Tetris Game Logic
 const COLS = 10;
 const ROWS = 20;
-const BLOCK_SIZE = 24;
+const BLOCK_SIZE = 27; // 9:16 aspect ratio: 270x480 canvas
 
 // Particle effect functions
 function createParticles(x, y, count, color) {

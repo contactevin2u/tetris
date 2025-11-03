@@ -401,13 +401,13 @@ button:disabled {
 }
 
 .main-player-column {
-    flex: 1;
+    flex: 2;
     display: flex;
     flex-direction: column;
 }
 
 .other-players-column {
-    flex: 0.33;
+    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -430,15 +430,33 @@ button:disabled {
     transition: all 0.3s ease;
 }
 
-/* Main player takes full height */
+/* Main player takes full height with 9:16 aspect ratio */
 .main-player-column .player-container {
     height: 100%;
 }
 
-/* Other players share the space */
+/* Main player canvas - full 9:16 aspect ratio */
+.main-player-column canvas[id^="canvas-"] {
+    width: 270px;
+    height: 480px;
+}
+
+/* Other players share the space with 9:16 aspect ratio */
 .other-players-column .player-container {
     flex: 1;
     min-height: 150px;
+}
+
+/* Smaller canvases for other players - maintain 9:16 ratio */
+.other-players-column canvas[id^="canvas-"] {
+    width: 135px;
+    height: 240px;
+}
+
+.other-players-column canvas[id^="hold-"],
+.other-players-column canvas[id^="next-"] {
+    width: 48px;
+    height: 48px;
 }
 
 .player-container:hover {
@@ -807,7 +825,13 @@ canvas {
     }
 
     .player-container {
-        height: 300px;
+        height: auto;
+    }
+
+    /* Mobile: keep 9:16 ratio */
+    canvas[id^="canvas-"] {
+        width: 135px;
+        height: 240px;
     }
 
     .modal-content {
