@@ -8,11 +8,11 @@ let dropInterval;
 // Configuration - auto-detects environment
 const API_URL = window.location.hostname === 'localhost'
     ? 'http://localhost:8080'
-    : 'https://YOUR_RENDER_APP_NAME.onrender.com';
+    : 'https://tetris-backend-ic5y.onrender.com';
 
 const WS_URL = window.location.hostname === 'localhost'
     ? 'ws://localhost:8080'
-    : 'wss://YOUR_RENDER_APP_NAME.onrender.com';
+    : 'wss://tetris-backend-ic5y.onrender.com';
 
 // Connect to WebSocket server
 function connect() {
