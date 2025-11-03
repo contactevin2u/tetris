@@ -147,31 +147,25 @@ function updateStartButton(playerCount, gameInProgress) {
 }
 
 function updatePlayerSizing() {
-    const mainColumn = document.querySelector('.main-player-column');
-    const othersColumn = document.querySelector('.other-players-column');
+    const playersGrid = document.querySelector('.players-grid');
 
-    if (!mainColumn || !othersColumn) return;
+    if (!playersGrid) return;
 
-    // Move player containers to appropriate columns
-    // Note: appendChild automatically removes from previous parent
+    // Move all player containers to the grid
     for (let i = 0; i < 4; i++) {
         const container = document.querySelector(`.player-container[data-player-id="${i}"]`);
         if (container) {
             container.classList.remove('my-player', 'other-player');
-            container.style.display = 'block';
+            container.style.display = 'flex';
 
+            // Highlight my player
             if (myPlayerId >= 0 && i === myPlayerId) {
-                // This is my player - put in main column
                 container.classList.add('my-player');
-                if (container.parentElement !== mainColumn) {
-                    mainColumn.appendChild(container);
-                }
-            } else {
-                // Other players - put in others column
-                container.classList.add('other-player');
-                if (container.parentElement !== othersColumn) {
-                    othersColumn.appendChild(container);
-                }
+            }
+
+            // Move to grid if not already there
+            if (container.parentElement !== playersGrid) {
+                playersGrid.appendChild(container);
             }
         }
     }

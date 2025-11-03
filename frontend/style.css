@@ -392,25 +392,22 @@ button:disabled {
 }
 
 .players-grid {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
     gap: 10px;
     margin-bottom: 10px;
     height: calc(100vh - 220px);
-    max-height: 550px;
-    min-height: 450px;
+    max-height: 500px;
+    min-height: 400px;
 }
 
 .main-player-column {
-    flex: 2;
-    display: flex;
+    display: none;
 }
 
 .other-players-column {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    overflow-y: auto;
+    display: none;
 }
 
 .player-container {
@@ -433,16 +430,22 @@ button:disabled {
     border-color: rgba(120, 119, 198, 0.3);
 }
 
-/* Main player - large display */
-.player-container.my-player {
+/* All players in grid - equal sizing */
+.player-container {
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* My player - highlighted with golden glow */
+.player-container.my-player {
     background: rgba(255,215,0,0.08);
     border: 3px solid rgba(255,215,0,0.5);
     box-shadow:
-        0 12px 48px rgba(255,215,0,0.4),
-        0 0 60px rgba(255,215,0,0.2),
-        inset 0 0 30px rgba(255,215,0,0.1);
+        0 8px 32px rgba(255,215,0,0.4),
+        0 0 40px rgba(255,215,0,0.2),
+        inset 0 0 20px rgba(255,215,0,0.1);
     animation: playerGlow 3s ease-in-out infinite;
 }
 
@@ -450,109 +453,69 @@ button:disabled {
     0%, 100% {
         border-color: rgba(255,215,0,0.5);
         box-shadow:
-            0 12px 48px rgba(255,215,0,0.4),
-            0 0 60px rgba(255,215,0,0.2),
-            inset 0 0 30px rgba(255,215,0,0.1);
+            0 8px 32px rgba(255,215,0,0.4),
+            0 0 40px rgba(255,215,0,0.2),
+            inset 0 0 20px rgba(255,215,0,0.1);
     }
     50% {
         border-color: rgba(255,215,0,0.7);
         box-shadow:
-            0 15px 60px rgba(255,215,0,0.5),
-            0 0 80px rgba(255,215,0,0.3),
-            inset 0 0 40px rgba(255,215,0,0.15);
+            0 10px 40px rgba(255,215,0,0.5),
+            0 0 50px rgba(255,215,0,0.3),
+            inset 0 0 25px rgba(255,215,0,0.15);
     }
 }
 
 .player-container.my-player .player-header h3 {
-    font-size: 1.3em;
     color: #FFD700;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-}
-
-.player-container.my-player .score {
-    font-size: 1.1em;
-}
-
-/* Other players - smaller display */
-.player-container.other-player {
-    flex-shrink: 0;
-    height: 32%;
-    min-height: 180px;
-}
-
-.player-container.other-player .player-header h3 {
-    font-size: 0.9em;
-}
-
-.player-container.other-player .score {
-    font-size: 0.8em;
-}
-
-.player-container.other-player .game-layout {
-    transform: scale(0.75);
-    transform-origin: top left;
-    width: 133%;
-}
-
-.player-container.other-player .preview-boxes {
-    gap: 5px;
-}
-
-.player-container.other-player .preview-box {
-    padding: 4px;
-}
-
-.player-container.other-player .preview-label {
-    font-size: 0.7em;
-    margin-bottom: 2px;
-}
-
-.player-container.other-player .player-status {
-    font-size: 0.8em;
-    padding: 4px;
-    margin-top: 5px;
+    text-shadow: 0 0 10px rgba(255,215,0,0.8);
 }
 
 .player-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+    flex-shrink: 0;
 }
 
 .player-header h3 {
-    font-size: 1.3em;
+    font-size: 1em;
+    margin: 0;
 }
 
 .score {
-    font-size: 1.1em;
+    font-size: 0.9em;
     font-weight: bold;
 }
 
 .game-layout {
     display: flex;
-    gap: 10px;
+    gap: 5px;
     align-items: flex-start;
+    flex: 1;
+    min-height: 0;
 }
 
 .preview-boxes {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
+    flex-shrink: 0;
 }
 
 .preview-box {
     background: rgba(0,0,0,0.3);
-    padding: 8px;
-    border-radius: 5px;
-    border: 2px solid rgba(255,255,255,0.2);
+    padding: 4px;
+    border-radius: 4px;
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
 .preview-label {
     text-align: center;
-    font-size: 0.85em;
+    font-size: 0.7em;
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
     color: #FFD700;
 }
 
@@ -560,6 +523,7 @@ button:disabled {
     background: #000;
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 3px;
+    display: block;
 }
 
 canvas {
@@ -575,16 +539,19 @@ canvas {
 
 #canvas-0, #canvas-1, #canvas-2, #canvas-3 {
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: contain;
 }
 
 .player-status {
     text-align: center;
-    margin-top: 10px;
-    padding: 8px;
+    margin-top: 5px;
+    padding: 4px;
     background: rgba(0,0,0,0.3);
-    border-radius: 5px;
+    border-radius: 4px;
     font-weight: bold;
+    font-size: 0.75em;
+    flex-shrink: 0;
 }
 
 .controls {
@@ -816,37 +783,16 @@ canvas {
     }
 
     .players-grid {
-        flex-direction: column;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
         height: auto;
         min-height: auto;
         gap: 10px;
         margin-bottom: 120px; /* Space for mobile controls */
     }
 
-    .main-player-column {
-        flex: 1;
-        min-height: 400px;
-    }
-
-    .other-players-column {
-        flex: 1;
-        flex-direction: row;
-        overflow-x: auto;
-        overflow-y: hidden;
-        gap: 5px;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .player-container.other-player {
-        min-width: 150px;
-        height: 250px;
-        flex-shrink: 0;
-    }
-
-    .player-container.other-player .game-layout {
-        transform: scale(0.6);
-        transform-origin: top left;
-        width: 167%;
+    .player-container {
+        height: 300px;
     }
 
     .modal-content {
@@ -874,8 +820,8 @@ canvas {
         letter-spacing: 1px;
     }
 
-    .main-player-column {
-        min-height: 350px;
+    .player-container {
+        height: 250px;
     }
 
     .control-pad {
@@ -903,11 +849,6 @@ canvas {
     button {
         padding: 6px 10px;
         font-size: 0.7em;
-    }
-
-    .player-container.other-player {
-        min-width: 120px;
-        height: 200px;
     }
 
     .special-message {
