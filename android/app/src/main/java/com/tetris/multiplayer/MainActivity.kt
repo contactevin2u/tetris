@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
 
     private val gameLoop = object : Runnable {
         override fun run() {
-            if (gameRunning && !myGame.getState().gameOver) {
+            if (::myGame.isInitialized && gameRunning && !myGame.getState().gameOver) {
                 myGame.move(0, 1)
                 handler.postDelayed(this, getDropInterval())
             }
@@ -100,7 +100,8 @@ class MainActivity : AppCompatActivity() {
             onStateChanged = { state ->
                 runOnUiThread {
                     updateUI(state)
-                    if (!myGame.scoreSubmitted) {
+                    // Check if myGame is initialized before accessing scoreSubmitted
+                    if (::myGame.isInitialized && !myGame.scoreSubmitted) {
                         lifecycleScope.launch {
                             try {
                                 multiplayerManager.updateGameState(state)
@@ -134,12 +135,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupControls() {
-        binding.btnLeft.setOnClickListener { myGame.move(-1, 0) }
-        binding.btnRight.setOnClickListener { myGame.move(1, 0) }
-        binding.btnDown.setOnClickListener { myGame.move(0, 1) }
-        binding.btnRotate.setOnClickListener { myGame.rotate() }
-        binding.btnDrop.setOnClickListener { myGame.hardDrop() }
-        binding.btnHold.setOnClickListener { myGame.holdPiece() }
+        binding.btnLeft.setOnClickListener { if (::myGame.isInitialized) myGame.move(-1, 0) }
+        binding.btnRight.setOnClickListener { if (::myGame.isInitialized) myGame.move(1, 0) }
+        binding.btnDown.setOnClickListener { if (::myGame.isInitialized) myGame.move(0, 1) }
+        binding.btnRotate.setOnClickListener { if (::myGame.isInitialized) myGame.rotate() }
+        binding.btnDrop.setOnClickListener { if (::myGame.isInitialized) myGame.hardDrop() }
+        binding.btnHold.setOnClickListener { if (::myGame.isInitialized) myGame.holdPiece() }
 
         binding.btnStartGame.setOnClickListener {
             if (!gameRunning) {
@@ -248,6 +249,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startGame() {
+        if (!::myGame.isInitialized) return
         myGame.reset()
         gameRunning = true
         binding.btnStartGame.text = "Stop Game"
@@ -259,7 +261,7 @@ class MainActivity : AppCompatActivity() {
         binding.btnStartGame.text = "Start Game"
         handler.removeCallbacks(gameLoop)
 
-        if (!myGame.scoreSubmitted) {
+        if (::myGame.isInitialized && !myGame.scoreSubmitted) {
             showScoreSubmitDialog()
         }
     }
@@ -306,6 +308,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showScoreSubmitDialog() {
+        if (!::myGame.isInitialized) return
         val state = myGame.getState()
         if (state.score == 0) return
 
@@ -323,7 +326,9 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 leaderboardManager.submitScore(playerName, score, linesCleared)
-                myGame.scoreSubmitted = true
+                if (::myGame.isInitialized) {
+                    myGame.scoreSubmitted = true
+                }
                 runOnUiThread {
                     Toast.makeText(
                         this@MainActivity,
@@ -371,6 +376,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getDropInterval(): Long {
+        if (!::myGame.isInitialized) return 1000L
         val level = myGame.getState().linesCleared / 10
         return maxOf(100L, 1000L - (level * 50L))
     }
