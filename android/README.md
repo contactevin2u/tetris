@@ -147,11 +147,16 @@ service cloud.firestore {
    # Open the 'android' folder in Android Studio
    ```
 
-4. **Sync Gradle**:
-   - Android Studio will automatically sync
-   - Or click "Sync Now" if prompted
+4. **Sync Gradle with Project Files**:
+   - Android Studio will automatically detect and sync Gradle
+   - Or manually: **File → Sync Project with Gradle Files**
+   - Or click **"Sync Now"** banner at the top
+   - This downloads dependencies and validates configuration
+   - Wait for sync to complete (check bottom status bar)
 
 5. **Build the project**:
+   - In Android Studio: **Build → Make Project**
+   - Or from command line:
    ```bash
    ./gradlew build
    ```
@@ -274,9 +279,13 @@ When clearing lines, garbage lines are sent to opponents:
 - Place in `android/app/` directory
 
 **Error: Gradle sync failed**
-- Check internet connection
-- Update Gradle: `./gradlew wrapper --gradle-version=8.1.4`
-- Invalidate caches: File → Invalidate Caches / Restart
+- Check internet connection (Gradle downloads dependencies)
+- Manually sync: **File → Sync Project with Gradle Files**
+- Clean and rebuild: **Build → Clean Project**, then **Build → Rebuild Project**
+- Update Gradle wrapper: `./gradlew wrapper --gradle-version=8.1.4`
+- Invalidate caches: **File → Invalidate Caches / Restart**
+- Check `build.gradle` for syntax errors
+- Verify Firebase BoM version is available (currently using 34.5.0)
 
 **Error: SDK not found**
 - Set ANDROID_HOME environment variable
