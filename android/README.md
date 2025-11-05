@@ -19,7 +19,7 @@ A real-time multiplayer Tetris game for Android built with Kotlin, Gradle, and F
 ## Tech Stack
 
 - **Language**: Kotlin 1.9.20
-- **Build System**: Gradle 8.1.4
+- **Build System**: Gradle 8.7
 - **Min SDK**: 24 (Android 7.0)
 - **Target SDK**: 34 (Android 14)
 - **Backend**: Firebase
@@ -125,9 +125,17 @@ service cloud.firestore {
 
 ### Prerequisites
 
+**Recommended: Use Android Studio** (easiest - includes everything)
 - Android Studio Hedgehog (2023.1.1) or later
-- JDK 17 or later
+- Includes bundled JDK 17 ✅
+- Includes Android SDK ✅
+- Includes Gradle 8.7 ✅
+- See [ANDROID_STUDIO_SETUP.md](./ANDROID_STUDIO_SETUP.md) for detailed guide
+
+**Or for command-line builds:**
+- JDK 17 or later (⚠️ **Required** - Java 8 won't work)
 - Android SDK 34
+- Gradle 8.7 (included via wrapper)
 - Physical device or emulator running Android 7.0+
 
 ### Build Steps
@@ -282,7 +290,7 @@ When clearing lines, garbage lines are sent to opponents:
 - Check internet connection (Gradle downloads dependencies)
 - Manually sync: **File → Sync Project with Gradle Files**
 - Clean and rebuild: **Build → Clean Project**, then **Build → Rebuild Project**
-- Update Gradle wrapper: `./gradlew wrapper --gradle-version=8.1.4`
+- Update Gradle wrapper: `./gradlew wrapper --gradle-version=8.7`
 - Invalidate caches: **File → Invalidate Caches / Restart**
 - Check `build.gradle` for syntax errors
 - Verify Firebase BoM version is available (currently using 34.5.0)
