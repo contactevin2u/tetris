@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -22,6 +23,10 @@ import com.tetris.multiplayer.models.TetrominoType
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        private const val TAG = "TetrisMultiplayer"
+    }
+
     private lateinit var binding: ActivityMainBinding
     private lateinit var player2Binding: PlayerSmallBinding
     private lateinit var player3Binding: PlayerSmallBinding
@@ -47,30 +52,47 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate started")
 
         // Initialize Firebase
         try {
             FirebaseApp.initializeApp(this)
+            Log.d(TAG, "Firebase initialized successfully")
         } catch (e: Exception) {
-            // Already initialized
+            Log.d(TAG, "Firebase already initialized: ${e.message}")
         }
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        try {
+            binding = ActivityMainBinding.inflate(layoutInflater)
+            setContentView(binding.root)
+            Log.d(TAG, "View binding completed")
 
-        // Bind included layouts
-        player2Binding = PlayerSmallBinding.bind(binding.player2.root)
-        player3Binding = PlayerSmallBinding.bind(binding.player3.root)
-        player4Binding = PlayerSmallBinding.bind(binding.player4.root)
+            // Bind included layouts (binding.player2 is already the root view)
+            player2Binding = PlayerSmallBinding.bind(binding.root.findViewById(R.id.player2))
+            player3Binding = PlayerSmallBinding.bind(binding.root.findViewById(R.id.player3))
+            player4Binding = PlayerSmallBinding.bind(binding.root.findViewById(R.id.player4))
+            Log.d(TAG, "Player bindings completed")
 
-        multiplayerManager = MultiplayerManager()
-        leaderboardManager = LeaderboardManager()
+            multiplayerManager = MultiplayerManager()
+            leaderboardManager = LeaderboardManager()
+            Log.d(TAG, "Firebase managers initialized")
 
-        initializeGame()
-        setupControls()
-        setupFirebase()
+            initializeGame()
+            Log.d(TAG, "Game initialized")
 
-        promptForName()
+            setupControls()
+            Log.d(TAG, "Controls setup completed")
+
+            setupFirebase()
+            Log.d(TAG, "Firebase setup completed")
+
+            promptForName()
+            Log.d(TAG, "Name prompt displayed")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error in onCreate: ${e.message}", e)
+            Toast.makeText(this, "Error initializing app: ${e.message}", Toast.LENGTH_LONG).show()
+            finish()
+        }
     }
 
     private fun initializeGame() {
@@ -197,9 +219,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun joinMultiplayerGame() {
+        Log.d(TAG, "Attempting to join multiplayer game as $playerName")
         lifecycleScope.launch {
             try {
                 myPlayerId = multiplayerManager.joinGame(playerName)
+                Log.d(TAG, "Successfully joined as player $myPlayerId")
                 runOnUiThread {
                     binding.tvPlayer1Name.text = "$playerName (You)"
                     Toast.makeText(
@@ -210,10 +234,12 @@ class MainActivity : AppCompatActivity() {
 
                     // Setup game state observers after successfully joining
                     setupGameStateObservers()
+                    Log.d(TAG, "Game state observers setup completed")
                 }
             } catch (e: Exception) {
+                Log.e(TAG, "Error joining game: ${e.message}", e)
                 runOnUiThread {
-                    Toast.makeText(this@MainActivity, e.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@MainActivity, "Error joining game: ${e.message}", Toast.LENGTH_LONG).show()
                     finish()
                 }
             }
