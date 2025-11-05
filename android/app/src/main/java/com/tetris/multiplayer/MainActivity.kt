@@ -162,8 +162,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
 
-        // Observe other players' game states
+    private fun setupGameStateObservers() {
+        // Observe other players' game states (called after joining)
         for (i in 0 until 4) {
             if (i != myPlayerId) {
                 lifecycleScope.launch {
@@ -205,6 +207,9 @@ class MainActivity : AppCompatActivity() {
                         "Joined as Player ${myPlayerId + 1}",
                         Toast.LENGTH_SHORT
                     ).show()
+
+                    // Setup game state observers after successfully joining
+                    setupGameStateObservers()
                 }
             } catch (e: Exception) {
                 runOnUiThread {
