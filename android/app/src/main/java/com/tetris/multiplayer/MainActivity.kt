@@ -173,7 +173,8 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             multiplayerManager.observeAttacks().collect { (fromPlayerId, garbageLines) ->
                 runOnUiThread {
-                    if (gameRunning && !myGame.getState().gameOver) {
+                    // Check if myGame is initialized before using it
+                    if (::myGame.isInitialized && gameRunning && !myGame.getState().gameOver) {
                         myGame.addGarbageLines(garbageLines)
                         Toast.makeText(
                             this@MainActivity,
