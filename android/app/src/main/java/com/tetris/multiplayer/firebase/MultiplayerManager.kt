@@ -8,6 +8,7 @@ import com.tetris.multiplayer.models.PlayerInfo
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 
 class MultiplayerManager {
     private val database: DatabaseReference = Firebase.database.reference
@@ -206,9 +207,5 @@ class MultiplayerManager {
         awaitClose {
             attacksRef.removeEventListener(listener)
         }
-    }
-
-    private suspend fun <T> com.google.android.gms.tasks.Task<T>.await(): T {
-        return kotlinx.coroutines.tasks.await(this)
     }
 }

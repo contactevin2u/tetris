@@ -46,7 +46,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     // Import the Firebase BoM
-    implementation platform('com.google.firebase:firebase-bom:34.5.0')
+    implementation platform('com.google.firebase:firebase-bom:33.7.0')
 
     // Firebase products - versions managed by BoM
     implementation 'com.google.firebase:firebase-database-ktx'
@@ -67,3 +67,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
+
+// Apply Google services plugin (must be at the bottom of the file)
+apply plugin: 'com.google.gms.google-services'
