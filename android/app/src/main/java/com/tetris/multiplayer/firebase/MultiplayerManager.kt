@@ -11,12 +11,9 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 class MultiplayerManager {
-    private val database: DatabaseReference = try {
-        Firebase.database("https://tetris-1f53c-default-rtdb.firebaseio.com").reference
-    } catch (e: Exception) {
-        // Fallback to default database if URL fails
-        Firebase.database.reference
-    }
+    private val database: DatabaseReference = FirebaseDatabase.getInstance(
+        "https://tetris-1f53c-default-rtdb.asia-southeast1.firebasedatabase.app"
+    ).reference
     private val gameSessionRef = database.child("gameSession")
     private val playersRef = gameSessionRef.child("players")
     private val gameStateRef = gameSessionRef.child("gameStates")
