@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+
+    <!-- Tetromino colors -->
+    <color name="tetromino_i">#00F0F0</color>
+    <color name="tetromino_o">#F0F000</color>
+    <color name="tetromino_t">#A000F0</color>
+    <color name="tetromino_s">#00F000</color>
+    <color name="tetromino_z">#F00000</color>
+    <color name="tetromino_j">#0000F0</color>
+    <color name="tetromino_l">#F0A000</color>
+    <color name="garbage">#666666</color>
+
+    <!-- UI colors -->
+    <color name="grid_line">#646478</color>
+    <color name="background">#1A1A2E</color>
+    <color name="combo_text">#FF5722</color>
+    <color name="special_text">#FFD700</color>
+</resources>
