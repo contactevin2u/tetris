@@ -19,11 +19,12 @@ app/debug/
 # Google Services (Firebase)
 google-services.json
 
-# Keystore files
+# Keystore files (CRITICAL - never commit these!)
 *.jks
 *.keystore
+keystore.properties
 
-# APK files
+# APK/AAB files
 *.apk
 *.aab
 
