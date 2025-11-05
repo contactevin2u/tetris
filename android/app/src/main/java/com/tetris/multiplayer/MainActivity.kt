@@ -11,7 +11,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.FirebaseApp
 import com.tetris.multiplayer.databinding.ActivityMainBinding
+import com.tetris.multiplayer.databinding.PlayerSmallBinding
 import com.tetris.multiplayer.firebase.LeaderboardManager
 import com.tetris.multiplayer.firebase.MultiplayerManager
 import com.tetris.multiplayer.game.TetrisGame
@@ -21,6 +23,10 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var player2Binding: PlayerSmallBinding
+    private lateinit var player3Binding: PlayerSmallBinding
+    private lateinit var player4Binding: PlayerSmallBinding
+
     private lateinit var myGame: TetrisGame
     private lateinit var multiplayerManager: MultiplayerManager
     private lateinit var leaderboardManager: LeaderboardManager
@@ -41,8 +47,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Initialize Firebase
+        try {
+            FirebaseApp.initializeApp(this)
+        } catch (e: Exception) {
+            // Already initialized
+        }
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Bind included layouts
+        player2Binding = PlayerSmallBinding.bind(binding.player2.root)
+        player3Binding = PlayerSmallBinding.bind(binding.player3.root)
+        player4Binding = PlayerSmallBinding.bind(binding.player4.root)
 
         multiplayerManager = MultiplayerManager()
         leaderboardManager = LeaderboardManager()
@@ -121,9 +140,9 @@ class MainActivity : AppCompatActivity() {
                     binding.tvPlayerCount.text = "Players: ${players.size}/4"
 
                     // Hide/show player views
-                    binding.player2.root.visibility = if (players.any { it.id == 1 }) View.VISIBLE else View.GONE
-                    binding.player3.root.visibility = if (players.any { it.id == 2 }) View.VISIBLE else View.GONE
-                    binding.player4.root.visibility = if (players.any { it.id == 3 }) View.VISIBLE else View.GONE
+                    player2Binding.root.visibility = if (players.any { it.id == 1 }) View.VISIBLE else View.GONE
+                    player3Binding.root.visibility = if (players.any { it.id == 2 }) View.VISIBLE else View.GONE
+                    player4Binding.root.visibility = if (players.any { it.id == 3 }) View.VISIBLE else View.GONE
                 }
             }
         }
@@ -236,22 +255,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateOpponentView(playerId: Int, state: GameState?) {
-        val view = when (playerId) {
-            1 -> binding.player2
-            2 -> binding.player3
-            3 -> binding.player4
+        val playerBinding = when (playerId) {
+            1 -> player2Binding
+            2 -> player3Binding
+            3 -> player4Binding
             else -> return
         }
 
         if (state == null) {
-            view.root.visibility = View.GONE
+            playerBinding.root.visibility = View.GONE
             return
         }
 
-        view.root.visibility = View.VISIBLE
-        view.tetrisView.updateState(state)
-        view.tvScore.text = "Score: ${state.score}"
-        view.tvPlayerName.text = "Player ${playerId + 1}"
+        playerBinding.root.visibility = View.VISIBLE
+        playerBinding.tetrisView.updateState(state)
+        playerBinding.tvScore.text = "Score: ${state.score}"
+        playerBinding.tvPlayerName.text = "Player ${playerId + 1}"
     }
 
     private fun showScoreSubmitDialog() {
